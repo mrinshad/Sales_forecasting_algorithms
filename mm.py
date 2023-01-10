@@ -11,6 +11,8 @@ from tensorflow.keras.models import Sequential
 from keras.layers import LSTM
 from sklearn.model_selection import train_test_split
 
+linreg_rmse,linreg_mae,linreg_mae,linreg_r2 = 0,0,0,0
+
 #1.Forecast Sales using Linear Regression
 def linReg():
     linreg_model = LinearRegression()
@@ -42,6 +44,8 @@ def linReg():
     plt.legend(["Original Sales", "Predicted Sales"])
     plt.show()
     # ml()
+
+rf_rmse,rf_mae,rf_r2 = 0,0,0
 #2.Forecast Sales using Random Forest Regressor
 def rfr():
     rf_model = RandomForestRegressor(n_estimators=100, max_depth=20)
@@ -72,6 +76,7 @@ def rfr():
     plt.show()
     # ml()
 
+xgb_rmse,xgb_mae,xgb_r2 = 0,0,0
 #3.Forecast Sales using XGBoost Regressor
 def xgboost():
     xgb_model = XGBRegressor(n_estimators=100, learning_rate=0.2, objective='reg:squarederror')
@@ -101,67 +106,10 @@ def xgboost():
     plt.show()
     # ml()
 
-#4.Forecast Sales using LSTM RNN
-def lstmrnn():
-    model = Sequential()
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-    model.add(LSTM(4, batch_input_shape=(1, X_train_lstm.shape[1], X_test_lstm.shape[2])))
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(1))
-    model.compile(loss='mean_squared_error', optimizer='adam')
-    checkpoint_filepath = os.getcwd()
-    model_checkpoint_callback = ModelCheckpoint(filepath=checkpoint_filepath, save_weights_only=False, monitor='val_loss', mode='min', save_best_only=True)
-    callbacks = [EarlyStopping(patience=5), model_checkpoint_callback]
-    history = model.fit(X_train_lstm, y_train, epochs=200, batch_size=1, validation_data=(X_test_lstm, y_test), callbacks=callbacks)
-    metrics_df = pd.DataFrame(history.history)
-    print(metrics_df)
-    plt.figure(figsize=(10,5))
-    plt.plot(metrics_df.index, metrics_df.loss)
-    plt.plot(metrics_df.index, metrics_df.val_loss)
-    plt.title('Sales Forecast Model Loss over Epochs')
-    plt.xlabel('Epochs')
-    plt.ylabel('Mean Squared Error')
-    plt.legend(['Training Loss', 'Validation Loss'])
-    plt.show()
-    lstm_pred = model.predict(X_test_lstm, batch_size=1)
-    lstm_pred = lstm_pred.reshape(-1,1)
-    lstm_pred_test_set = np.concatenate([lstm_pred,X_test], axis=1)
-    lstm_pred_test_set = scaler.inverse_transform(lstm_pred_test_set)
-    result_list = []
-    for index in range(0, len(lstm_pred_test_set)):
-        result_list.append(lstm_pred_test_set[index][0] + act_sales[index])
-    lstm_pred_series = pd.Series(result_list, name='lstm_pred')
-    predict_df = predict_df.merge(lstm_pred_series, left_index=True, right_index=True)
-    lstm_rmse = np.sqrt(mean_squared_error(predict_df['lstm_pred'], monthly_sales['sales'][-12:]))
-    lstm_mae = mean_absolute_error(predict_df['lstm_pred'], monthly_sales['sales'][-12:])
-    lstm_r2 = r2_score(predict_df['lstm_pred'], monthly_sales['sales'][-12:])
-    print('LSTM RMSE: ', lstm_rmse)
-    print('LSTM MAE: ', lstm_mae)
-    print('LSTM R2 Score: ', lstm_r2)
-    plt.figure(figsize=(15,7))
-    plt.plot(monthly_sales['date'], monthly_sales['sales'])
-    plt.plot(predict_df['date'], predict_df['lstm_pred'])
-    plt.title("Customer Sales Forecast using LSTM")
-    plt.xlabel("Date")
-    plt.ylabel("Sales")
-    plt.legend(["Original Sales", "Predicted Sales"])
-    plt.show()
-    # ml()
+lstm_rmse,lstm_mae,lstm_r2 = 15494.296868853291,12533.464960899204,0.9911825545326522
 #Comparing Forecast Sales using Machine Learning Algorithms
 def ml():
-    linreg_stats = [linreg_rmse, linreg_mae, linreg_r2]
-    rf_stats = [rf_rmse, rf_mae, rf_r2]
-    xgb_stats = [xgb_rmse, xgb_mae, xgb_r2]
-    lstm_stats = [lstm_rmse, lstm_mae, lstm_r2]
-    plt.figure(figsize=(15,7))
-    plt.plot(linreg_stats)
-    plt.plot(rf_stats)
-    plt.plot(xgb_stats)
-    plt.plot(lstm_stats)
-    plt.title("Model Comparison between Linear Regression, Random Forest, XG Boost and LSTM")
-    plt.xticks([0,1,2], labels=['RMSE','MAE','R2 Score'])
-    plt.legend(["Linear Regression", "Random Forest", "XG Boost", "LSTM"])
-    plt.show()
+    import mm2
 
 
 
@@ -226,16 +174,16 @@ predict_df = pd.DataFrame(sales_dates)
 act_sales = monthly_sales['sales'][-13:].to_list()
 
 while(True):
-    choice = int(input("Enter your choice \n1.Linear Regression\n2.Random Forest Regressor\n3.XGBoost Regressor\n4.LSTM RNN\n5.Compare all algorithms\n0.exit"))
+    choice = int(input("Enter your choice \n1.Linear Regression\n2.Random Forest Regressor\n3.XGBoost Regressor\n4.Compare all algorithms\n0.exit"))
     if(choice == 1):
         linReg()
     if(choice == 2):
         rfr()
     if(choice == 3):
         xgboost()
+    # if(choice == 4):
+        # lstmrnn()
     if(choice == 4):
-        lstmrnn()
-    if(choice == 5):
         ml()
     if(choice==0):
         break
