@@ -162,10 +162,10 @@ X_train, y_train = train_data[:,1:], train_data[:,0:1]
 X_test, y_test = test_data[:,1:], test_data[:,0:1]
 y_train = y_train.ravel()
 y_test = y_test.ravel()
-print('X_train Shape:', X_train.shape)
-print('y_train Shape:', y_train.shape)
-print('X_test Shape:', X_test.shape)
-print('y_test Shape:', y_test.shape)
+# print('X_train Shape:', X_train.shape)
+# print('y_train Shape:', y_train.shape)
+# print('X_test Shape:', X_test.shape)
+# print('y_test Shape:', y_test.shape)
 
 #In the last step of data pre-processing, we will make a prediction data frame to merge the predicted sale prices of all the trained algorithms:
 sales_dates = monthly_sales['date'][-12:].reset_index(drop=True)

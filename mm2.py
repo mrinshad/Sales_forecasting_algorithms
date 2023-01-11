@@ -173,17 +173,31 @@ print('XG Boost R2 Score: ', xgb_r2)
 # plt.show()
 
 lstm_rmse,lstm_mae,lstm_r2 = 15494.296868853291,12533.464960899204,0.9911825545326522
+
 #Coparing Forecast Sales using Machine Learning Algorithms
-linreg_stats = [linreg_rmse, linreg_mae, linreg_r2]
-rf_stats = [rf_rmse, rf_mae, rf_r2]
-xgb_stats = [xgb_rmse, xgb_mae, xgb_r2]
-lstm_stats = [lstm_rmse, lstm_mae, lstm_r2]
+# linreg_stats = [linreg_rmse, linreg_mae, linreg_r2]
+# rf_stats = [rf_rmse, rf_mae, rf_r2]
+# xgb_stats = [xgb_rmse, xgb_mae, xgb_r2]
+# # lstm_stats = [lstm_rmse, lstm_mae, lstm_r2]
+# plt.figure(figsize=(15,7))
+# plt.plot(linreg_stats)
+# plt.plot(rf_stats)
+# plt.plot(xgb_stats)
+# # plt.plot(lstm_stats)
+# plt.title("Model Comparison between Linear Regression, Random Forest, XG Boost")
+# plt.xticks([0,1,2], labels=['RMSE','MAE','R2 Score'])
+# plt.legend(["Linear Regression", "Random Forest", "XG Boost"])
+# plt.show()
+
+# rre['xgb_pred'], monthly_sales['sales'][-12:]
+
 plt.figure(figsize=(15,7))
-plt.plot(linreg_stats)
-plt.plot(rf_stats)
-plt.plot(xgb_stats)
-plt.plot(lstm_stats)
-plt.title("Model Comparison between Linear Regression, Random Forest, XG Boost and LSTM")
-plt.xticks([0,1,2], labels=['RMSE','MAE','R2 Score'])
-plt.legend(["Linear Regression", "Random Forest", "XG Boost", "LSTM"])
+# plt.plot(monthly_sales['date'], monthly_sales['sales'][-12:])
+plt.plot(pre['date'], pre['linreg_pred'],linewidth=1, color="red")
+plt.plot(rrr['date'], rrr['rf_pred'],linewidth=1, color="green")
+plt.plot(rre['date'], rre['xgb_pred'],linewidth=1, color="blue")
+plt.title("Customer Sales Forecast using All methods")
+plt.xlabel("Date")
+plt.ylabel("Sales")
+plt.legend(["Linear Regression", "Random Forest Regressor","XGBoost Regressor"])
 plt.show()
